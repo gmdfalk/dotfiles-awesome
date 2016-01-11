@@ -20,10 +20,11 @@ It can be installed as standalone or via the [dotfiles](https://github.com/mikar
 Themes for Awesome WM 3.5+ (original README)
 --------------------------
 
+| table          | test         |
 | ------------- |:-------------:|
 | Author:       | Luke Bonham <dada [at] archlinux [dot] info> |
 | Version:      | git           |
-| License:      | [BY_-NC-SA] |
+| License:      | [BY-NC-SA] |
 | Source:       | [awesome-copycats] |
 
 ### Description
