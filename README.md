@@ -1,7 +1,7 @@
 # dotfiles-awesome
 
 This repository is based on [awesome-copycats] (see original README below).
-It can be installed as standalone or via the [dotfiles](https://github.com/mikar/dotfiles) repository.
+It can be installed as standalone or via the [dotfiles] repository.
 
 ## Installation
 ```bash
@@ -9,6 +9,8 @@ It can be installed as standalone or via the [dotfiles](https://github.com/mikar
     [ -d awesome ] && mv awesome awesome.bak
     git clone --recursive https://github.com/mikar/dotfiles-awesome.git awesome
     cp awesome/rc.lua.35 awesome/rc.lua
+    # Reload awesome, if it is running
+    pkill -HUP awesome
 ```
 
 ## Features
@@ -19,13 +21,10 @@ It can be installed as standalone or via the [dotfiles](https://github.com/mikar
 # Original README
 Themes for Awesome WM 3.5+ (original README)
 --------------------------
-
-| table          | test         |
-| ------------- |:-------------:|
-| Author:       | Luke Bonham <dada [at] archlinux [dot] info> |
-| Version:      | git           |
-| License:      | [BY-NC-SA] |
-| Source:       | [awesome-copycats] |
+Author:  Luke Bonham <dada [at] archlinux [dot] info>
+Version: git
+License: [BY-NC-SA]
+Source:  [awesome-copycats]
 
 ### Description
 
@@ -133,3 +132,4 @@ Only compatible with **stable** versions of Lua and Awesome (git/unstable versio
   [amouly]: https://bbs.archlinux.org/viewtopic.php?pid=1307158#p1307158
   [switch-theme.sh]: https://github.com/copycat-killer/awesome-copycats/issues/36
   [BY-NC-SA]: http://creativecommons.org/licenses/by-nc-sa/4.0/
+  [dotfiles]: https://github.com/mikar/dotfiles
