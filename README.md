@@ -17,14 +17,13 @@ It can be installed as standalone or via the [dotfiles] repository.
 
 ## Screenshot
 
-
 # Original README
 Themes for Awesome WM 3.5+ (original README)
 --------------------------
-Author:  Luke Bonham <dada [at] archlinux [dot] info>
-Version: git
-License: [BY-NC-SA]
-Source:  [awesome-copycats]
+Author:  Luke Bonham <dada [at] archlinux [dot] info>  
+Version: git  
+License: [BY-NC-SA]  
+Source:  [awesome-copycats]  
 
 ### Description
 
@@ -88,31 +87,6 @@ A set of themes with the aim of making [awesome] appearance awesome too!
 **Copland** inspired by [foozer]
 
 ![image][7]
-
-### Installation
-
-Using git you can have the full master branch: :
-
-    git clone --recursive https://github.com/copycat-killer/awesome-copycats.git
-
-then, move the contents of awesome-copycats to ~/.config/awesome.
-
-Otherwise, download the latest two masters of [awesome-copycats] and [lain], extract the first one, extract the second one into the first one, and put the contents of the first one into your Awesome directory.
-
-### Usage
-
-Switch a theme this way: :
-
-    cd ~/.config/awesome
-    cp rc.lua.theme rc.lua
-
-Alternatively, you can use [switch-theme.sh], which will also update to the latest commit.
-
-Then customize your `rc.lua` and restart Awesome (`Mod4 + ctrl + r`).
-
-### Notes
-
-Only compatible with **stable** versions of Lua and Awesome (git/unstable versions are *not* supported).
 
   [image]: http://dotshare.it/public/images/uploads/650.png
   [1]: http://dotshare.it/public/images/uploads/649.png
