@@ -179,44 +179,44 @@ local layouts = {
     --~ lain.layout.uselesspiral,
     --~ lain.layout.uselesstile,
 }
---~ tags = {
-    --names = { "web", "dev", "irc", "vlc", "play", "docs" },
-    --~ names = { "♏", "♐", "⌘", "☊", "♓", "⌥", "♒" },
-    --~ layouts = { layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[9], layouts[9] },
---~ }
---~ for s = 1, screen.count() do
---~ -- Each screen has its own tag table.
-    --~ tags[s] = awful.tag(tags.names, s, tags.layouts)
-    --~ awful.tag.setproperty(tags[s][4], "mwfact", 0.13)
-    --~ awful.tag.setproperty(tags[s][5], "hide",   true)
-    --~ awful.tag.setproperty(tags[s][6], "hide",   true)
---~ end
-
-gold = 0.618
 tags = {
-    { name = "♏", layout = layouts[1], mwfact = 0.5, hide = true   },  --dev
-    { name = "♐", layout = layouts[1], mwfact = 0.55  },  --www
-    { name = "⌘", layout = layouts[1], mwfact = 0.7   },  --irc
-    { name = "☊", layout = layouts[1], mwfact = 0.6  },   --vlc
-    { name = "♓", layout = layouts[7]                 },  --fun
-    { name = "⌥", layout = layouts[1], mwfact = gold  },  --gimp
-    { name = "♒", layout = layouts[1], mwfact = gold  },  --work
-    --{ name = "✿",  layout = layouts[1], mwfact = 0.4, nmaster = 1, ncol = 2 },
+    names = { "web", "dev", "irc", "vlc", "play", "docs" },
+    names = { "♏", "♐", "⌘", "☊", "♓", "⌥", "♒" },
+    layouts = { layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[9], layouts[9] },
 }
-
 for s = 1, screen.count() do
-    for i, v in ipairs(tags) do
-        tags[s][i] = tag({ name = v.name })
-        tags[s][i].screen = s
-        awful.tag.setproperty(tags[s][i], "layout", v.layout)
-        awful.tag.setproperty(tags[s][i], "mwfact", v.mwfact)
-        awful.tag.setproperty(tags[s][i], "ncol", v.ncol)
-        awful.tag.setproperty(tags[s][i], "nmaster", v.nmaster)
-        awful.tag.setproperty(tags[s][i], "hide",   v.hide)
-    end
-    tags[s][1].selected = true
-    tags[s][1].active = True
+    --Each screen has its own tag table.
+    tags[s] = awful.tag(tags.names, s, tags.layouts)
+    awful.tag.setproperty(tags[s][4], "mwfact", 0.13)
+    awful.tag.setproperty(tags[s][5], "hide",   true)
+    awful.tag.setproperty(tags[s][6], "hide",   true)
 end
+
+--gold = 0.618
+--tags = {
+--    { name = "♏", layout = layouts[1], mwfact = 0.5, hide = true   },  --dev
+--    { name = "♐", layout = layouts[1], mwfact = 0.55  },  --www
+--    { name = "⌘", layout = layouts[1], mwfact = 0.7   },  --irc
+--    { name = "☊", layout = layouts[1], mwfact = 0.6  },   --vlc
+--    { name = "♓", layout = layouts[7]                 },  --fun
+--    { name = "⌥", layout = layouts[1], mwfact = gold  },  --gimp
+--    { name = "♒", layout = layouts[1], mwfact = gold  },  --work
+--    --{ name = "✿",  layout = layouts[1], mwfact = 0.4, nmaster = 1, ncol = 2 },
+--}
+--
+--for s = 1, screen.count() do
+--    for i, v in ipairs(tags) do
+--        tags[s][i] = tag({ name = v.name })
+--        tags[s][i].screen = s
+--        awful.tag.setproperty(tags[s][i], "layout", v.layout)
+--        awful.tag.setproperty(tags[s][i], "mwfact", v.mwfact)
+--        awful.tag.setproperty(tags[s][i], "ncol", v.ncol)
+--        awful.tag.setproperty(tags[s][i], "nmaster", v.nmaster)
+--        awful.tag.setproperty(tags[s][i], "hide",   v.hide)
+--    end
+--    tags[s][1].selected = true
+--    tags[s][1].active = True
+--end
 -- }}}
 
 -- =====================================================================
