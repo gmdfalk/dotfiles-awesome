@@ -161,11 +161,11 @@ local layouts = {
     awful.layout.suit.tile.left,        --2
     awful.layout.suit.tile.top,         --3
     awful.layout.suit.fair.horizontal,  --4
-    awful.layout.suit.max,              --5
-    lain.layout.uselesstile,            --6
-    lain.layout.uselessfair,            --7
-    lain.layout.centerwork,             --8
-    awful.layout.suit.floating,         --9
+    lain.layout.uselesstile,            --5
+    lain.layout.uselessfair,            --6
+    awful.layout.suit.floating,         --7
+    --    awful.layout.suit.max,
+--    lain.layout.centerwork,
     --~ awful.layout.suit.tile.bottom,
     --~ awful.layout.suit.fair,
     --~ awful.layout.suit.spiral,
@@ -184,26 +184,14 @@ local layouts = {
 -- =====================================================================
 gold = 0.618
 tags = {
-    { name = "♏", layout = layouts[1], mwfact = 0.8,  ncol = 3, nmaster = 1, hide = false   }, --web
-    { name = "♐", layout = layouts[1], mwfact = 0.7,  ncol = 2, nmaster = 2, hide = false   }, --dev
-    { name = "⌘", layout = layouts[1], mwfact = 0.6,  ncol = 1, nmaster = 3, hide = false   }, --vim
-    { name = "☊", layout = layouts[1], mwfact = 0.5,  ncol = 3, nmaster = 1, hide = false   }, --vlc
-    { name = "♓", layout = layouts[7], mwfact = 0.4,  ncol = 2, nmaster = 2, hide = false   }, --vm
-    { name = "⌥", layout = layouts[1], mwfact = gold, ncol = 1, nmaster = 3, hide = false   }, --docs
-    { name = "♒", layout = layouts[1], mwfact = gold, ncol = 2, nmaster = 1, hide = false   }, --work
+    { name = "⌘", layout = layouts[1], mwfact = gold, ncol = 2, nmaster = 1, hide = false   }, --web
+    { name = "♐", layout = layouts[1], mwfact = 0.7,  ncol = 2, nmaster = 1, hide = false   }, --dev
+    { name = "♏", layout = layouts[1], mwfact = 0.5,  ncol = 2, nmaster = 1, hide = false   }, --vim
+    { name = "☊", layout = layouts[1], mwfact = gold, ncol = 2, nmaster = 2, hide = false   }, --vlc
+    { name = "⌥", layout = layouts[7], mwfact = 0.7,  ncol = 2, nmaster = 1, hide = false   }, --vm
+    { name = "♓", layout = layouts[1], mwfact = gold, ncol = 2, nmaster = 1, hide = false   }, --docs
+    { name = "♒", layout = layouts[7], mwfact = 0.5,  ncol = 2, nmaster = 1, hide = false   }, --play
 }
---tags = {
---    names = { "web", "dev", "edit", "vlc", "vm", "docs", "play" },
---    names = { "♏", "♐", "⌘", "☊", "♓", "⌥", "♒" },
---    layouts = { layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[9], layouts[9] },
---}
---for s = 1, screen.count() do
---    --Each screen has its own tag table.
---    tags[s] = awful.tag(tags.names, s, tags.layouts)
---    awful.tag.setproperty(tags[s][4], "mwfact", 0.13)
---    awful.tag.setproperty(tags[s][5], "hide",   true)
---    awful.tag.setproperty(tags[s][6], "hide",   true)
---end
 
 for s = 1, screen.count() do
     for index, tag_properties in ipairs(tags) do
@@ -1054,7 +1042,7 @@ awful.rules.rules = {
 
     -- 6:docs
    { rule_any = { class = { "Gimp", "Zeal", "LibreOffice", "AbiWord" } },
-        properties = { tag = tags[1][6], switchtotag = true}
+        properties = { tag = tags[1][6], switchtotag = true }
     },
     { rule = { class = "Gimp", role = "gimp-image-window" },
         callback = awful.client.setmaster
@@ -1069,7 +1057,7 @@ client.connect_signal("manage", function (c)
     if not awesome.startup then
         -- Set the windows at the slave,
         -- i.e. put it at the end of others instead of setting it master.
-        -- awful.client.setslave(c)
+         awful.client.setslave(c)
 
         -- Put windows in a smart way, only if they do not set an initial position.
         if not c.size_hints.user_position and not c.size_hints.program_position then
