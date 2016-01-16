@@ -184,15 +184,26 @@ local layouts = {
 -- =====================================================================
 gold = 0.618
 tags = {
-    { name = "♏", layout = layouts[1], mwfact = 0.8, ncol = 3, nmaster = 1, hide = false   },  --dev
-    { name = "♐", layout = layouts[1], mwfact = 0.7, ncol = 2, nmaster = 2, hide = false   },  --www
-    { name = "⌘", layout = layouts[1], mwfact = 0.6, ncol = 1, nmaster = 3, hide = false   },  --irc
-    { name = "☊", layout = layouts[1], mwfact = 0.5, ncol = 3, nmaster = 1, hide = false   },   --vlc
-    { name = "♓", layout = layouts[7] , mwfact = 0.4, ncol = 2, nmaster = 2, hide = false  },  --fun
-    { name = "⌥", layout = layouts[1], mwfact = gold, ncol = 1, nmaster = 3, hide = false   },  --gimp
-    { name = "♒", layout = layouts[1], mwfact = gold, ncol = 2, nmaster = 1, hide = true   },  --work
-    --{ name = "✿",  layout = layouts[1], mwfact = 0.4, nmaster = 1, ncol = 2 },
+    { name = "♏", layout = layouts[1], mwfact = 0.8,  ncol = 3, nmaster = 1, hide = false   }, --web
+    { name = "♐", layout = layouts[1], mwfact = 0.7,  ncol = 2, nmaster = 2, hide = false   }, --dev
+    { name = "⌘", layout = layouts[1], mwfact = 0.6,  ncol = 1, nmaster = 3, hide = false   }, --vim
+    { name = "☊", layout = layouts[1], mwfact = 0.5,  ncol = 3, nmaster = 1, hide = false   }, --vlc
+    { name = "♓", layout = layouts[7], mwfact = 0.4,  ncol = 2, nmaster = 2, hide = false   }, --vm
+    { name = "⌥", layout = layouts[1], mwfact = gold, ncol = 1, nmaster = 3, hide = false   }, --docs
+    { name = "♒", layout = layouts[1], mwfact = gold, ncol = 2, nmaster = 1, hide = false   }, --work
 }
+--tags = {
+--    names = { "web", "dev", "edit", "vlc", "vm", "docs", "play" },
+--    names = { "♏", "♐", "⌘", "☊", "♓", "⌥", "♒" },
+--    layouts = { layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[9], layouts[9] },
+--}
+--for s = 1, screen.count() do
+--    --Each screen has its own tag table.
+--    tags[s] = awful.tag(tags.names, s, tags.layouts)
+--    awful.tag.setproperty(tags[s][4], "mwfact", 0.13)
+--    awful.tag.setproperty(tags[s][5], "hide",   true)
+--    awful.tag.setproperty(tags[s][6], "hide",   true)
+--end
 
 for s = 1, screen.count() do
     for index, tag_properties in ipairs(tags) do
@@ -204,6 +215,8 @@ for s = 1, screen.count() do
         awful.tag.setproperty(new_tag, "nmaster", tag_properties.nmaster)
         awful.tag.setproperty(new_tag, "hide",   tag_properties.hide)
         tags[s][index] = new_tag
+        -- Somehow, the displayed order of the tags gets messed up so we have to correct it here
+        awful.tag.move(index, new_tag)
     end
     tags[1][1].selected = true
 end
@@ -999,6 +1012,7 @@ awful.rules.rules = {
     --~ },
     { rule_any = { class = { "Copyq", "Zenity" } },
         properties = { sticky = true, ontop = true, above = true },
+
         callback = awful.placement.centered
     },
 
@@ -1013,23 +1027,20 @@ awful.rules.rules = {
 
     -- 2:dev
    { rule_any = { class = { "jetbrains-.*", "Eclipse", "Gvim", "Geany", "Gedit", "medit" }, instance = { "urxvt_edit" } },
-        properties = { tag = tags[1][2], switchtotag = true }
+        properties = { tag = tags[1][2] }
     },
 
-    -- 3:irc
-   { rule_any = { class = { "Pidgin", "Hexchat" } },
+    -- 3:edit/term
+    { rule_any = { class = { "Gvim", "Geany", "Gedit", "medit" }, instance = { "urxvt_edit" } },
         properties = { tag = tags[1][3] }
-    },
-    { rule_any = { class = { "Hexchat" } },
-        callback = awful.client.setmaster
     },
 
     -- 4:vlc
-   { rule_any = { class = { "Vlc", "Mplayer", "Clementine" } },
-        properties = { tag = tags[1][4], switchtotag = true }
+   { rule_any = { class = { "Vlc", "Mplayer" } },
+        properties = { tag = tags[1][4] }
     },
 
-    -- 5:play
+    -- 5:vm
    { rule_any = { class = { "VirtualBox", "Wine", "Vncviewer", "Nxplayer.bin" } },
         properties = { tag = tags[1][5], floating = true }
     },
@@ -1037,7 +1048,7 @@ awful.rules.rules = {
         callback = awful.placement.centered
     },
     { rule_any = { class = { "Vncviewer", "VirtualBox" } },
-        properties = { switchtotag = true },
+--        properties = { switchtotag = true },
         callback = awful.placement.centered
     },
 
