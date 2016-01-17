@@ -1,5 +1,5 @@
 --- Configuration file for AwesomeWM 3.5.6
---- https://github.com/mikar/dotfiles/blob/master/.config/awesome/rc.lua
+--- https://github.com/mikar/dotfiles-awesome
 
 -- =====================================================================
 -- {{{ s_libs
@@ -87,6 +87,7 @@ function run_or_raise (command, rule)
 end
 
 function try_run_or_raise(command)
+    print(command .. capitalize_string(command))
    run_or_raise(command, { class = capitalize_string(command) })
 end
 
@@ -118,7 +119,7 @@ music            = "spotify"
 audio            = "clementine"
 video            = "vlc"
 torrent          = "deluge"
-
+irc              = "hexchat"
 dev              = "intellij-idea-ultimate-edition"
 dev_class        = "jetbrains-idea"
 pydev            = "pycharm"
@@ -179,7 +180,8 @@ if not awful.util.file_readable(themes_dir..theme) then
     themes_dir  = sharedthemes
 end
 beautiful.init(themes_dir..theme)
-
+-- Revelation needs to be initialized after beautiful
+revelation.init()
 -- }}}
 
 -- =====================================================================
@@ -240,7 +242,7 @@ for s = 1, screen.count() do
         awful.tag.setproperty(new_tag, "mwfact", tag_properties.mwfact)
         awful.tag.setproperty(new_tag, "nmaster", tag_properties.nmaster)
         awful.tag.setproperty(new_tag, "hide",   tag_properties.hide)
-        --awful.tag.setproperty(new_tag, "ncol", tag_properties.ncol)
+        awful.tag.setproperty(new_tag, "ncol", tag_properties.ncol)
         tags[s][index] = new_tag
         -- Somehow, the displayed order of the tags gets messed up so we have to correct it here
         awful.tag.move(index, new_tag)
@@ -771,35 +773,35 @@ globalkeys = awful.util.table.join(
 
 
     -- Toggle between tile and floating layout
---    awful.key(k_m, "q", function ()
---        if awful.layout.get(mouse.screen) ~= awful.layout.suit.tile then
---            awful.layout.set(awful.layout.suit.floating)
---        else
---            awful.layout.set(awful.layout.suit.tile)
---        end
---    end),
+    awful.key(k_m, "q", function ()
+        if awful.layout.get(mouse.screen) ~= awful.layout.suit.tile then
+            awful.layout.set(awful.layout.suit.tile)
+        else
+            awful.layout.set(awful.layout.suit.floating)
+        end
+    end),
 
     -- run_or_raise
-    awful.key(k_mc, "f",       function () try_run_or_raise(browser) end),
-    awful.key(k_mc, "f",       function () try_run_or_raise(mail) end),
-    awful.key(k_mc, "f",       function () try_run_or_raise(gui_editor) end),
-    awful.key(k_mc, "f",       function () try_run_or_raise(graphics) end),
-    awful.key(k_mc, "f",       function () try_run_or_raise(video) end),
-    awful.key(k_mc, "f",       function () try_run_or_raise(dev) end),
-    awful.key(k_mc, "f",       function () try_run_or_raise(pydev) end),
-    awful.key(k_mc, "f",       function () try_run_or_raise(webdev) end),
+    awful.key(k_m,  "w",  function () run_or_raise(dev, { class = dev_class }) end),
+    awful.key(k_m,  "f",  function () try_run_or_raise(browser) end),
+    awful.key(k_ms, "g",  function () try_run_or_raise(graphics) end),
+    awful.key(k_m,  "g",  function () try_run_or_raise(gui_editor) end),
+    awful.key(k_m,  "v",  function () try_run_or_raise(video) end),
+    awful.key(k_ms, "w",  function () try_run_or_raise(pydev) end),
+    awful.key(k_mc, "w",  function () try_run_or_raise(webdev) end),
 
     -- Scratchdrop
-    awful.key(k_m, "a",     function () drop("urxvt -name urxvt_drop_bl -e tmux", "bottom", "left", 0.5, 0.35 ) end),
-    awful.key(k_m, "s",     function () drop("urxvt -name urxvt_drop_bc -e tmux", "bottom", "center", 1, 0.35 ) end),
-    awful.key(k_m, "d",     function () drop("urxvt -name urxvt_drop_br", "bottom", "right", 0.5, 0.35 ) end),
-    awful.key(k_m, "q",     function () drop("copyq show", "center", "center", 0.5, 0.6 ) end),
-    awful.key(k_m, "d",     function () drop("deluge", "center", "center", 0.7, 0.8 ) end),
-    awful.key(k_m, "o",     function () drop("spotify", "center", "center", 0.7, 0.8 ) end),
-    awful.key(k_m, "o",     function () drop(torrent, "center", "center", 0.7, 0.8 ) end),
-    awful.key(k_m, "o",     function () drop(audio, "center", "center", 0.7, 0.8 ) end),
+    awful.key(k_m,  "i",  function () drop(irc, "center", "center", 0.7, 0.8 ) end),
+    awful.key(k_mc, "t",  function () drop(mail, "center", "center", 0.7, 0.8 ) end),
+    awful.key(k_mc, "a",  function () drop(audio, "center", "center", 0.7, 0.8 ) end),
+    awful.key(k_mc, "s",  function () drop(music, "center", "center", 0.7, 0.8 ) end),
+    awful.key(k_mc, "d",  function () drop(torrent, "center", "center", 0.7, 0.8 ) end),
+    awful.key(k_m,  "a",  function () drop("urxvt -name urxvt_drop_bl -e tmux", "bottom", "left", 0.5, 0.35 ) end),
+    awful.key(k_m,  "s",  function () drop("urxvt -name urxvt_drop_bc -e tmux", "bottom", "center", 1, 0.35 ) end),
+    awful.key(k_m,  "d",  function () drop("urxvt -name urxvt_drop_br", "bottom", "right", 0.5, 0.35 ) end),
+    awful.key(k_mc, "c",  function () drop("copyq show", "center", "center", 0.5, 0.6 ) end),
 
-    awful.key(k_ms, "e", revelation)
+    awful.key(k_m, "e", revelation)
     -- }}}
 )
 
@@ -950,7 +952,6 @@ awful.rules.rules = {
           "Zenity",
           "Plugin-container",
           "Blockify",
-          "Thunderbird",
           "Deluge",
           "Clementine",
         },
@@ -969,10 +970,6 @@ awful.rules.rules = {
     --~ },
     --~ { rule_any = { class = { "Plugin-container" } },
         --~ properties = { maximized_horizontal = true, maximized_vertical = true }
-    --~ },
-    --~ { rule_any = { class = { "Thunderbird", "Deluge" } },
-        --~ properties = { geometry = { width = 1200, height = 800 } },
-        --~ callback = awful.placement.centered
     --~ },
     { rule_any = { class = { "Copyq", "Zenity" } },
         properties = { sticky = true, ontop = true, above = true },
