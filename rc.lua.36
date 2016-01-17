@@ -144,6 +144,8 @@ if not awful.util.file_readable(themes_dir..theme) then
     themes_dir  = sharedthemes
 end
 beautiful.init(themes_dir..theme)
+-- Revelation needs to be initialized after beautiful
+revelation.init()
 -- }}}
 
 -- =====================================================================
