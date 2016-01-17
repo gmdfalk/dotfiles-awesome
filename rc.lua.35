@@ -63,14 +63,42 @@ local function client_menu_toggle_fn()
     end
 end
 
+-- First letter to uppercase
+function capitalize_string(str)
+    return (str:gsub("^%l", string.upper))
+end
+
 -- Execute a command once at start of awesome
 function run_once(cmd)
-  findme = cmd
-  firstspace = cmd:find(" ")
-  if firstspace then
-     findme = cmd:sub(0, firstspace-1)
-  end
-  sexec("pgrep -u $USER -x " .. findme .. " > /dev/null || (" .. cmd .. ")")
+    findme = cmd
+    firstspace = cmd:find(" ")
+    if firstspace then
+        findme = cmd:sub(0, firstspace-1)
+    end
+    sexec("pgrep -u $USER -x " .. findme .. " > /dev/null || (" .. cmd .. ")")
+end
+
+-- Switch to app and start it, if it's not running yet
+function run_or_raise (command, rule)
+    local matcher = function (c)
+        return awful.rules.match(c, rule)
+    end
+    awful.client.run_or_raise(command, matcher)
+end
+
+function try_run_or_raise(command)
+   run_or_raise(command, { class = capitalize_string(command) })
+end
+
+
+function get_wibox_height ()
+    return mywibox[mouse.screen].height
+end
+
+function get_current_screen_workarea ()
+    -- Get available screen workarea
+    local index = mouse.screen
+    return screen[index].workarea
 end
 -- }}}
 
@@ -78,14 +106,23 @@ end
 -- {{{ s_vars
 -- =====================================================================
 -- Apps
-terminal   = "urxvt" or "xterm"
-terminal_tmux = terminal .. " -e tmux"
-editor     = os.getenv("EDITOR") or "vim" or "vi"
-editor_cmd = terminal .. " -e " .. editor
-gui_editor = "gvim"
-browser    = "firefox"
-mail       = "thunderbird"
-graphics   = "gimp"
+terminal         = "urxvt" or "xterm"
+terminal_tmux    = terminal .. " -e tmux"
+editor           = os.getenv("EDITOR") or "vim" or "vi"
+editor_cmd       = terminal .. " -e " .. editor
+browser          = "firefox"
+mail             = "thunderbird"
+gui_editor       = "gvim"
+graphics         = "gimp"
+music            = "spotify"
+audio            = "clementine"
+video            = "vlc"
+torrent          = "deluge"
+
+dev              = "intellij-idea-ultimate-edition"
+dev_class        = "jetbrains-idea"
+pydev            = "pycharm"
+webdev           = "webstorm"
 
 -- Environment
 hostname       = io.lines("/proc/sys/kernel/hostname")()
@@ -184,28 +221,15 @@ local layouts = {
 -- =====================================================================
 -- {{{ s_tags
 -- =====================================================================
---tags = {
---    --~ --names = { "web", "dev", "irc", "vlc", "play", "docs" },
---    names = { "♏", "♐", "⌘", "☊", "♓", "⌥", "♒" },
---    layouts = { layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[9], layouts[9] },
---}
---for s = 1, screen.count() do
----- Each screen has its own tag table.
---    tags[s] = awful.tag(tags.names, s, tags.layouts)
---    --~ awful.tag.setproperty(tags[s][4], "mwfact", 0.13)
---    --~ awful.tag.setproperty(tags[s][5], "hide",   true)
---    --~ awful.tag.setproperty(tags[s][6], "hide",   true)
---end
-
 gold = 0.618
 tags = {
-    { name = "⌘", layout = layouts[1], mwfact = gold, ncol = 2, nmaster = 1, hide = false   }, --web
-    { name = "♐", layout = layouts[1], mwfact = 0.7,  ncol = 2, nmaster = 1, hide = false   }, --dev
-    { name = "♏", layout = layouts[1], mwfact = 0.5,  ncol = 2, nmaster = 1, hide = false   }, --vim
-    { name = "☊", layout = layouts[1], mwfact = gold, ncol = 2, nmaster = 2, hide = false   }, --vlc
-    { name = "⌥", layout = layouts[7], mwfact = 0.7,  ncol = 2, nmaster = 1, hide = false   }, --vm
-    { name = "♓", layout = layouts[1], mwfact = gold, ncol = 2, nmaster = 1, hide = false   }, --docs
-    { name = "♒", layout = layouts[7], mwfact = 0.5,  ncol = 2, nmaster = 1, hide = false   }, --play
+    { name = "⌘", layout = layouts[1], mwfact = gold, nmaster = 1, hide = false   }, --web
+    { name = "♐", layout = layouts[1], mwfact = 0.7,  nmaster = 1, hide = false   }, --dev
+    { name = "♏", layout = layouts[1], mwfact = 0.5,  nmaster = 1, hide = false   }, --vim
+    { name = "☊", layout = layouts[1], mwfact = gold, nmaster = 2, hide = false   }, --vlc
+    { name = "⌥", layout = layouts[7], mwfact = 0.7,  nmaster = 1, hide = false   }, --vm
+    { name = "♓", layout = layouts[1], mwfact = gold, nmaster = 1, hide = false   }, --docs
+    { name = "♒", layout = layouts[7], mwfact = 0.5,  nmaster = 1, hide = false   }, --play
 }
 
 for s = 1, screen.count() do
@@ -214,9 +238,9 @@ for s = 1, screen.count() do
         awful.tag.setscreen(new_tag, s)
         awful.tag.setproperty(new_tag, "layout", tag_properties.layout)
         awful.tag.setproperty(new_tag, "mwfact", tag_properties.mwfact)
-        awful.tag.setproperty(new_tag, "ncol", tag_properties.ncol)
         awful.tag.setproperty(new_tag, "nmaster", tag_properties.nmaster)
         awful.tag.setproperty(new_tag, "hide",   tag_properties.hide)
+        --awful.tag.setproperty(new_tag, "ncol", tag_properties.ncol)
         tags[s][index] = new_tag
         -- Somehow, the displayed order of the tags gets messed up so we have to correct it here
         awful.tag.move(index, new_tag)
@@ -342,8 +366,8 @@ tempwidget = lain.widgets.temp({
 baticon = wibox.widget.imagebox(beautiful.widget_batt)
 suspend_scheduled = false
 batwidget = lain.widgets.bat({
-    settings = function()
-        if bat_now.perc == "N/A" then
+settings = function()
+    if bat_now.perc == "N/A" then
             perc = "AC "
         else
 	    percent = tonumber(bat_now.perc)
@@ -566,20 +590,6 @@ function widget_volume_full ()
     os.execute(string.format("amixer -q set %s 100%%", volumewidget.channel))
     volumewidget.update()
 end
-function run_or_raise (command, rule)
-    local matcher = function (c)
-        return awful.rules.match(c, rule)
-    end
-    awful.client.run_or_raise(command, matcher)
-end
-function get_wibox_height ()
-    return mywibox[mouse.screen].height
-end
-function get_current_screen_workarea ()
-    -- Get available screen workarea
-    local index = mouse.screen
-    return screen[index].workarea
-end
 function snap_client_to_screen_half(c, half)
     -- Float client
     awful.client.floating.set(c, true)
@@ -673,8 +683,8 @@ globalkeys = awful.util.table.join(
     -- }}}
 
     -- {{{ Remapped default actions
-    awful.key(k_mc, "w", function () mymainmenu:show() end),
-    awful.key(k_m, "x",
+    awful.key(k_ms, "w", function () mymainmenu:show() end),
+    awful.key(k_ms, "x",
               function ()
                   awful.prompt.run({ prompt = "Run Lua code: " },
                   mypromptbox[mouse.screen].widget,
@@ -702,17 +712,13 @@ globalkeys = awful.util.table.join(
     end),
 
     -- Copy to clipboard
-    --~ awful.key(k_m, "c", function () os.execute("xsel -p -o | xsel -i -b") end),
+    awful.key(k_m, "c", function () os.execute("xsel -p -o | xsel -i -b") end),
 
-    -- User programs
-    --~ awful.key(k_m, "q", function () exec(browser) end),
-    --~ awful.key(k_m, "s", function () exec(gui_editor) end),
-    --~ awful.key(k_m, "g", function () exec(graphics) end),
     -- Screenshots
     awful.key(k_n, "Print",     function () sexec("scrot-wrapper") end),
     awful.key(k_w, "Print",     function () sexec("scrot-wrapper thumb") end),
     awful.key(k_a, "Print",     function () sexec("scrot-wrapper window") end),
-    --awful.key(k_a, "Print",     function () sexec("(sleep 1 && xdotvvool click 1) & scrot -q 90 -bs " .. screenshot_dir .. "/w%m.%d.%y_%H-%M-%S.jpg") end),
+    --awful.key(k_a, "Print",     function () sexec("(sleep 1 && xdotool click 1) & scrot -q 90 -bs " .. screenshot_dir .. "/w%m.%d.%y_%H-%M-%S.jpg") end),
 
     -- Media control
     -- Available on Thinkpad W541:
@@ -734,16 +740,16 @@ globalkeys = awful.util.table.join(
     -- ACPI control buttons
     awful.key({},   "XF86MonBrightnessUp",   function () sexec("xbacklight -inc 7") end),
     awful.key({},   "XF86MonBrightnessDown", function () sexec("xbacklight -dec 7") end),
-    awful.key({},   "XF86Display",    function () sexec("autorandr -c --force") end),
+    awful.key({},   "XF86Display",           function () sexec("autorandr -c --force") end),
     --~ awful.key({},   "XF86WLAN",       function () sexec("") end),
 
     -- ACPI tool buttons
     --~ awful.key({},   "XF86Tools",      function () sexec("") end),
     --~ awful.key({},   "XF86Search",     function () sexec("") end),
     --~ awful.key({},   "XF86LaunchA",    function () sexec("") end),
-    awful.key({},   "XF86Explorer",   function () run_or_raise("pcmanfm", { class = "Pcmanfm" }) end),
-    awful.key({},   "XF86Calculator", function () sexec("gnome-calculator") end),
-    awful.key({},   "XF86HomePage",   function () run_or_raise(browser, { class = "Firefox" }) end),
+    awful.key({},   "XF86Explorer",   function () try_run_or_raise("pcmanfm") end),
+    awful.key({},   "XF86Calculator", function () try_run_or_raise("gnome-calculator") end),
+    awful.key({},   "XF86HomePage",   function () try_run_or_raise(browser) end),
 
     -- ACPI audio control
     awful.key({},   "XF86AudioMute",         widget_volume_mute),
@@ -763,20 +769,37 @@ globalkeys = awful.util.table.join(
     awful.key(k_m, "Up",              widget_volume_up),
     awful.key(k_m, "Down",            widget_volume_down),
 
+
+    -- Toggle between tile and floating layout
+--    awful.key(k_m, "q", function ()
+--        if awful.layout.get(mouse.screen) ~= awful.layout.suit.tile then
+--            awful.layout.set(awful.layout.suit.floating)
+--        else
+--            awful.layout.set(awful.layout.suit.tile)
+--        end
+--    end),
+
+    -- run_or_raise
+    awful.key(k_mc, "f",       function () try_run_or_raise(browser) end),
+    awful.key(k_mc, "f",       function () try_run_or_raise(mail) end),
+    awful.key(k_mc, "f",       function () try_run_or_raise(gui_editor) end),
+    awful.key(k_mc, "f",       function () try_run_or_raise(graphics) end),
+    awful.key(k_mc, "f",       function () try_run_or_raise(video) end),
+    awful.key(k_mc, "f",       function () try_run_or_raise(dev) end),
+    awful.key(k_mc, "f",       function () try_run_or_raise(pydev) end),
+    awful.key(k_mc, "f",       function () try_run_or_raise(webdev) end),
+
     -- Scratchdrop
-    awful.key(k_m, "a", function () drop("urxvt -name urxvt_drop_bl -e tmux", "bottom", "left", 0.5, 0.35 ) end),
-    awful.key(k_m, "s", function () drop("urxvt -name urxvt_drop_bc -e tmux", "bottom", "center", 1, 0.35 ) end),
-    awful.key(k_m, "d", function () drop("urxvt -name urxvt_drop_br", "bottom", "right", 0.5, 0.35 ) end),
-    --awful.key(k_m, "t",       function () drop("thunderbird", "center", "center", 0.7, 0.8 ) end),
-    --awful.key(k_m, "d",       function () drop("deluge", "center", "center", 0.7, 0.8 ) end),
-    awful.key(k_mc, "f",       function () run_or_raise("firefox", { class = "Firefox" }) end),
+    awful.key(k_m, "a",     function () drop("urxvt -name urxvt_drop_bl -e tmux", "bottom", "left", 0.5, 0.35 ) end),
+    awful.key(k_m, "s",     function () drop("urxvt -name urxvt_drop_bc -e tmux", "bottom", "center", 1, 0.35 ) end),
+    awful.key(k_m, "d",     function () drop("urxvt -name urxvt_drop_br", "bottom", "right", 0.5, 0.35 ) end),
+    awful.key(k_m, "q",     function () drop("copyq show", "center", "center", 0.5, 0.6 ) end),
+    awful.key(k_m, "d",     function () drop("deluge", "center", "center", 0.7, 0.8 ) end),
+    awful.key(k_m, "o",     function () drop("spotify", "center", "center", 0.7, 0.8 ) end),
+    awful.key(k_m, "o",     function () drop(torrent, "center", "center", 0.7, 0.8 ) end),
+    awful.key(k_m, "o",     function () drop(audio, "center", "center", 0.7, 0.8 ) end),
 
-    --awful.key(k_m, "o",       function () drop("spotify", "center", "center", 0.7, 0.8 ) end),
-    --awful.key(k_m, "q",       function () drop("copyq show", "center", "right", 0.5, 0.7 ) end)
-    --awful.key(k_m, "h",       function () drop("urxvt -name urxvt_ghost -e ghost", "top", "center", 0.5, 0.6 ) end),
-
-    -- Revelation
-    awful.key(k_m, "e", revelation)
+    awful.key(k_ms, "e", revelation)
     -- }}}
 )
 
@@ -792,7 +815,7 @@ end
 -- {{{ s_clientkeys
 -- =====================================================================
 clientkeys = awful.util.table.join(
-    awful.key(k_m, "f",
+    awful.key(k_m, "x",
         function (c)
             c.fullscreen = not c.fullscreen
             c:raise()
@@ -800,14 +823,9 @@ clientkeys = awful.util.table.join(
     awful.key(k_ms, "c",      function (c) c:kill()                         end),
     awful.key(k_mc, "space",  awful.client.floating.toggle                     ),
     awful.key(k_mc, "Return", function (c) c:swap(awful.client.getmaster()) end),
-    awful.key(k_m, "o",      awful.client.movetoscreen                         ),
+    awful.key(k_m, "o",       awful.client.movetoscreen                        ),
     awful.key(k_m, "t",       function (c) c.ontop = not c.ontop            end),
-    awful.key(k_m, "n",
-        function (c)
-            -- The client currently has the input focus, so it cannot be
-            -- minimized, since minimized clients can't have the focus.
-            c.minimized = true
-        end),
+    awful.key(k_m, "n",       function (c) c.minimized = true               end),
     awful.key(k_m, "m",
         function (c)
             c.maximized = not c.maximized
@@ -815,22 +833,22 @@ clientkeys = awful.util.table.join(
         end),
     -- Non-default client keys
     awful.key(k_ms, "f",    function (c)
-                                --~ if awful.client.floating.get(c)
-                                    --~ awful.client.floating.set(c, false)
-                                --~ else
+                                if awful.client.floating.get(c) then
+                                    awful.client.floating.set(c, false)
+                                else
                                     -- ~ c:geometry( { width = 720 , height = 450 } )
                                     awful.client.floating.set(c, true)
                                     local g = c:geometry()
                                     g.height = math.floor(g.height/2)*2
                                     g.width = math.floor(g.width/2)*2
                                     c:geometry(g)
-                                --~ end
+                                end
                             end),
     awful.key({ modkey, "Control" }, "a", function (c) snap_client_to_screen_half (c, "left") end),
     awful.key({ modkey, "Control" }, "d", function (c) snap_client_to_screen_half (c, "right") end),
     awful.key({ modkey, "Control" }, "w", function (c) snap_client_to_screen_half (c, "upper") end),
-    awful.key({ modkey, "Control" }, "s", function (c) snap_client_to_screen_half (c, "lower") end),
-    awful.key(k_ms, "o",    function (c) c.ontop = not c.ontop   end)
+    awful.key({ modkey, "Control" }, "s", function (c) snap_client_to_screen_half (c, "lower") end)
+
     --~ awful.key(k_ms, "s",    function (c) c.sticky = not c.sticky end),
 )
 
@@ -929,11 +947,12 @@ awful.rules.rules = {
           "pinentry",
           "veromix",
           "xtightvncviewer",
+          "Zenity",
+          "Plugin-container",
           "Blockify",
           "Thunderbird",
           "Deluge",
-          "Zenity",
-          "Plugin-container",
+          "Clementine",
         },
         name = {
           "Event Tester",  -- xev.
@@ -964,30 +983,27 @@ awful.rules.rules = {
    { rule_any = { class = { "Firefox", "Chromium", "Dwb" } },
         properties = { tag = tags[1][1] }
     },
-    { rule = { class = "Firefox" }, except = { instance = "Navigator" },
-        properties = { floating = true },
-        callback = awful.placement.centered
-    },
+--    { rule = { class = "Firefox" }, except = { instance = "Navigator" },
+--        properties = { floating = true },
+--        callback = awful.placement.centered
+--    },
 
     -- 2:dev
    { rule_any = { class = { "jetbrains-.*", "Eclipse", "Gvim", "Geany", "Gedit", "medit" }, instance = { "urxvt_edit" } },
-        properties = { tag = tags[1][2], switchtotag = true }
+        properties = { tag = tags[1][2] }
     },
 
-    -- 3:irc
-   { rule_any = { class = { "Pidgin", "Hexchat" } },
+    -- 3:vim
+    { rule_any = { class = { "Gvim", "Geany", "Gedit", "medit" }, instance = { "urxvt_edit" } },
         properties = { tag = tags[1][3] }
-    },
-    { rule_any = { class = { "Hexchat" } },
-        callback = awful.client.setmaster
     },
 
     -- 4:vlc
-   { rule_any = { class = { "Vlc", "Mplayer", "Clementine" } },
-        properties = { tag = tags[1][4], switchtotag = true }
+   { rule_any = { class = { "Vlc", "Mplayer" } },
+        properties = { tag = tags[1][4] }
     },
 
-    -- 5:play
+    -- 5:vm
    { rule_any = { class = { "VirtualBox", "Wine", "Vncviewer", "Nxplayer.bin" } },
         properties = { tag = tags[1][5], floating = true }
     },
@@ -995,17 +1011,19 @@ awful.rules.rules = {
         callback = awful.placement.centered
     },
     { rule_any = { class = { "Vncviewer", "VirtualBox" } },
-        properties = { switchtotag = true },
+--        properties = { switchtotag = true },
         callback = awful.placement.centered
     },
 
     -- 6:docs
    { rule_any = { class = { "Gimp", "Zeal", "LibreOffice", "AbiWord" } },
-        properties = { tag = tags[1][6], switchtotag = true}
+        properties = { tag = tags[1][6] }
     },
     { rule = { class = "Gimp", role = "gimp-image-window" },
         callback = awful.client.setmaster
     }
+
+    -- 7:play
 }
 -- }}}
 
@@ -1016,7 +1034,7 @@ client.connect_signal("manage", function (c)
     if not awesome.startup then
         -- Set the windows at the slave,
         -- i.e. put it at the end of others instead of setting it master.
-        -- awful.client.setslave(c)
+        awful.client.setslave(c)
 
         -- Put windows in a smart way, only if they do not set an initial position.
         if not c.size_hints.user_position and not c.size_hints.program_position then

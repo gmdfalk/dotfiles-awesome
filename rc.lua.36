@@ -184,13 +184,13 @@ local layouts = {
 -- =====================================================================
 gold = 0.618
 tags = {
-    { name = "⌘", layout = layouts[1], mwfact = gold, ncol = 2, nmaster = 1, hide = false   }, --web
-    { name = "♐", layout = layouts[1], mwfact = 0.7,  ncol = 2, nmaster = 1, hide = false   }, --dev
-    { name = "♏", layout = layouts[1], mwfact = 0.5,  ncol = 2, nmaster = 1, hide = false   }, --vim
-    { name = "☊", layout = layouts[1], mwfact = gold, ncol = 2, nmaster = 2, hide = false   }, --vlc
-    { name = "⌥", layout = layouts[7], mwfact = 0.7,  ncol = 2, nmaster = 1, hide = false   }, --vm
-    { name = "♓", layout = layouts[1], mwfact = gold, ncol = 2, nmaster = 1, hide = false   }, --docs
-    { name = "♒", layout = layouts[7], mwfact = 0.5,  ncol = 2, nmaster = 1, hide = false   }, --play
+    { name = "⌘", layout = layouts[1], mwfact = gold, nmaster = 1, hide = false   }, --web
+    { name = "♐", layout = layouts[1], mwfact = 0.7,  nmaster = 1, hide = false   }, --dev
+    { name = "♏", layout = layouts[1], mwfact = 0.5,  nmaster = 1, hide = false   }, --vim
+    { name = "☊", layout = layouts[1], mwfact = gold, nmaster = 2, hide = false   }, --vlc
+    { name = "⌥", layout = layouts[7], mwfact = 0.7,  nmaster = 1, hide = false   }, --vm
+    { name = "♓", layout = layouts[1], mwfact = gold, nmaster = 1, hide = false   }, --docs
+    { name = "♒", layout = layouts[7], mwfact = 0.5,  nmaster = 1, hide = false   }, --play
 }
 
 for s = 1, screen.count() do
