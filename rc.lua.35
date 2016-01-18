@@ -971,10 +971,10 @@ awful.rules.rules = {
     --~ { rule_any = { class = { "Plugin-container" } },
         --~ properties = { maximized_horizontal = true, maximized_vertical = true }
     --~ },
-    { rule_any = { class = { "Copyq", "Zenity" } },
-        properties = { sticky = true, ontop = true, above = true },
-        callback = awful.placement.centered
-    },
+--    { rule_any = { class = { "Copyq", "Zenity" } },
+--        properties = { sticky = true, ontop = true, above = true },
+--        callback = awful.placement.centered
+--    },
 
     -- 1:web
    { rule_any = { class = { "Firefox", "Chromium", "Dwb" } },
