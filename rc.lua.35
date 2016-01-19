@@ -119,7 +119,7 @@ music            = "spotify"
 audio            = "clementine"
 video            = "vlc"
 torrent          = "deluge"
-irc              = "hexchat"
+irc              = "konversation"
 dev              = "intellij-idea-ultimate-edition"
 dev_class        = "jetbrains-idea"
 pydev            = "pycharm"
@@ -791,7 +791,7 @@ globalkeys = awful.util.table.join(
     awful.key(k_mc, "w",  function () try_run_or_raise(webdev) end),
 
     -- Scratchdrop
-    awful.key(k_m,  "i",  function () drop(irc, "center", "center", 0.7, 0.8 ) end),
+    awful.key(k_m, "i",   function () drop(irc, "center", "center", 0.7, 0.8 ) end),
     awful.key(k_mc, "t",  function () drop(mail, "center", "center", 0.7, 0.8 ) end),
     awful.key(k_mc, "a",  function () drop(audio, "center", "center", 0.7, 0.8 ) end),
     awful.key(k_mc, "s",  function () drop(music, "center", "center", 0.7, 0.8 ) end),
