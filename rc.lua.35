@@ -749,7 +749,7 @@ globalkeys = awful.util.table.join(
     --~ awful.key({},   "XF86Tools",      function () sexec("") end),
     --~ awful.key({},   "XF86Search",     function () sexec("") end),
     --~ awful.key({},   "XF86LaunchA",    function () sexec("") end),
-    awful.key({},   "XF86Explorer",   function () try_run_or_raise("pcmanfm") end),
+    awful.key({},   "XF86Explorer",   function () try_run_or_raise("systemctl suspend") end),
     awful.key({},   "XF86Calculator", function () try_run_or_raise("gnome-calculator") end),
     awful.key({},   "XF86HomePage",   function () try_run_or_raise(browser) end),
 
@@ -798,7 +798,7 @@ globalkeys = awful.util.table.join(
     awful.key(k_mc, "d",  function () drop(torrent, "center", "center", 0.7, 0.8 ) end),
     awful.key(k_m,  "a",  function () drop("urxvt -name urxvt_drop_bl -e tmux", "bottom", "left", 0.5, 0.35 ) end),
     awful.key(k_m,  "s",  function () drop("urxvt -name urxvt_drop_bc -e tmux", "bottom", "center", 1, 0.35 ) end),
-    awful.key(k_m,  "d",  function () drop("urxvt -name urxvt_drop_br", "bottom", "right", 0.5, 0.35 ) end),
+    awful.key(k_m,  "d",  function () drop("urxvt -name urxvt_drop_br -e tmux", "bottom", "right", 0.5, 0.35 ) end),
     awful.key(k_mc, "c",  function () drop("copyq show", "center", "center", 0.5, 0.6 ) end),
 
     awful.key(k_m, "e", revelation)
