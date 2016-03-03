@@ -996,7 +996,7 @@ awful.rules.rules = {
     },
 
     -- 4:vlc
-   { rule_any = { class = { "Vlc", "Mplayer" } },
+   { rule_any = { class = { "Vlc", "Mplayer", "smplayer" } },
         properties = { tag = tags[1][4] }
     },
 
