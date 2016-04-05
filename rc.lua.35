@@ -806,9 +806,12 @@ globalkeys = awful.util.table.join(
 )
 
 if hostname ~= 'htpc' then
-    globalkeys = awful.util.table.join(globalkeys,
-    awful.key(k_mc, "Left",   function () sexec("ssh slave@htpc 'amixer -q set Master 7%-'") end),
-    awful.key(k_mc, "Right",  function () sexec("ssh slave@htpc 'amixer -q set Master 7%+'") end)
+    globalkeys = awful.util.table.join(
+        globalkeys,
+        awful.key(k_mc, "Up",    function () sexec("ssh htpc 'pamixer --increase 5'") end),
+        awful.key(k_mc, "Down",  function () sexec("ssh htpc 'pamixer --decrease 5'") end),
+        awful.key(k_mc, "Left",  function () sexec("ssh htpc 'pamixer --mute'") end),
+        awful.key(k_mc, "Right", function () sexec("ssh htpc 'pamixer --unmute'") end)
     )
 end
 -- }}}
