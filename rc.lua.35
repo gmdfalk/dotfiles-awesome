@@ -771,7 +771,6 @@ globalkeys = awful.util.table.join(
     awful.key(k_m, "Up",              widget_volume_up),
     awful.key(k_m, "Down",            widget_volume_down),
 
-
     -- Toggle between tile and floating layout
     awful.key(k_m, "q", function ()
         if awful.layout.get(mouse.screen) ~= awful.layout.suit.tile then
