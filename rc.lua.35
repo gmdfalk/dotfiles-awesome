@@ -381,7 +381,7 @@ batwidget = lain.widgets.bat({
                 if batnotification ~= nil then
                     naughty.destroy(batnotification)
                 end
-                if current_charge < 3 then
+                if current_charge <= 2 then
                     action = "systemctl poweroff"
                     batcounter = batcounter + battimeout
                     batnotification = naughty.notify({
@@ -389,7 +389,7 @@ batwidget = lain.widgets.bat({
                         title = string.format("Critical battery level! Shutting down in %s seconds.", max_timeout - batcounter),
                         text = awesome.startup_errors
                     })
-                elseif current_charge < 85 then
+                elseif current_charge <= 5 then
                     action = "systemctl suspend"
                     batcounter = batcounter + battimeout
                     batnotification = naughty.notify({
