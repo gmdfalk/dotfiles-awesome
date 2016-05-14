@@ -365,31 +365,46 @@ tempwidget = lain.widgets.temp({
 
 -- Battery
 baticon = wibox.widget.imagebox(beautiful.widget_batt)
-suspend_scheduled = false
-poweroff_scheduled = false
+battimeout = 5
+batnotification = nil
+batcounter = 0
 batwidget = lain.widgets.bat({
+    timeout  = battimeout,
     settings = function()
         local current_charge
         local current_charge_string = bat_now.perc
+        local max_timeout = 30
+        local action = ''
         if current_charge_string ~= "N/A" then
             current_charge = tonumber(current_charge_string)
-            if current_charge then
-                if current_charge < 3 and not poweroff_scheduled then
-                    naughty.notify({
+            if current_charge and bat_now.status == "Discharging" then
+                if batnotification ~= nil then
+                    naughty.destroy(batnotification)
+                end
+                if current_charge < 3 then
+                    action = "systemctl poweroff"
+                    batcounter = batcounter + battimeout
+                    batnotification = naughty.notify({
                         preset = naughty.config.presets.critical,
-                        title = "Critical battery level! Shutting down in 30 seconds.",
+                        title = string.format("Critical battery level! Shutting down in %s seconds.", max_timeout - batcounter),
                         text = awesome.startup_errors
                     })
-                    poweroff_scheduled = true
-                    sexec("sleep 30 && systemctl poweroff")
-                elseif current_charge < 5 and not suspend_scheduled then
-                    naughty.notify({
+                elseif current_charge < 85 then
+                    action = "systemctl suspend"
+                    batcounter = batcounter + battimeout
+                    batnotification = naughty.notify({
                         preset = naughty.config.presets.critical,
-                        title = "Dangerous battery level! Suspending in 30 seconds.",
+                        title = string.format("Dangerous battery level! Suspending in %s seconds.", max_timeout - batcounter),
                         text = awesome.startup_errors
                     })
-                    suspend_scheduled = true
-                    sexec("sleep 30 && systemctl suspend")
+                end
+                if batcounter >= max_timeout and action ~= '' then
+                    sexec(action)
+                end
+            else
+                batcounter = 0
+                if batnotification ~= nil then
+                    naughty.destroy(batnotification)
                 end
             end
             current_charge_string = bat_now.perc .. "% "
