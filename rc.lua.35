@@ -136,7 +136,8 @@ wibox_position = "top"
 border_width   = 0
 
 -- Widgets
-weather_city = 2857807 -- Find out via http://openweathermap.org/find
+--weather_city = 2857807 -- Find out via http://openweathermap.org/find
+weather_city = 2925533 -- FFM
 
 -- Lain
 lain.layout.termfair.nmaster = 3
