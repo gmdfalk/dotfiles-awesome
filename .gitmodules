@@ -1,0 +1,4 @@
+[submodule "lain"]
+    path = lain
+    url = https://github.com/lcpz/lain.git
+
