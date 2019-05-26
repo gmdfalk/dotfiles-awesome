@@ -11,20 +11,15 @@
 pcall(require, "luarocks.loader")
 
 -- Standard awesome library
-local gears = require("gears")
-local awful = require("awful")
-require("awful.autofocus")
--- Widget and layout library
-local wibox = require("wibox")
--- Theme handling library
-local beautiful = require("beautiful")
--- Notification library
-local naughty = require("naughty")
---local menubar = require("menubar")
-local hotkeys_popup = require("awful.hotkeys_popup")
--- Enable hotkeys help widget for VIM and other apps
--- when client with a matching name is opened:
-require("awful.hotkeys_popup.keys")
+local gears         = require("gears")
+local awful         = require("awful")
+                      require("awful.autofocus")
+local wibox         = require("wibox")
+local beautiful     = require("beautiful")
+local naughty       = require("naughty")
+--local menubar       = require("menubar")
+local hotkeys_popup = require("awful.hotkeys_popup").widget
+                      require("awful.hotkeys_popup.keys")
 
 local drop = require("scratchdrop")
 local lain = require("lain")
@@ -80,13 +75,11 @@ local function client_menu_toggle_fn()
 end
 
 -- Execute a command once at start of awesome
-function run_once(cmd)
-    findme = cmd
-    firstspace = cmd:find(" ")
-    if firstspace then
-        findme = cmd:sub(0, firstspace - 1)
+-- This function will run once every time Awesome is started
+local function run_once(cmd_arr)
+    for _, cmd in ipairs(cmd_arr) do
+        awful.spawn.with_shell(string.format("pgrep -u $USER -fx '%s' > /dev/null || (%s)", cmd, cmd))
     end
-    sexec("pgrep -u $USER -x " .. findme .. " > /dev/null || (" .. cmd .. ")")
 end
 
 -- Functions
@@ -214,21 +207,35 @@ k_ams = { altkey, modkey, "Shift" }
 -- =====================================================================
 -- {{{ s_theme
 -- =====================================================================
-theme = "redhalo/theme.lua"
+local themes = {
+    "blackburn",       -- 1
+    "copland",         -- 2
+    "dremora",         -- 3
+    "holo",            -- 4
+    "multicolor",      -- 5
+    "powerarrow",      -- 6
+    "powerarrow-dark", -- 7
+    "rainbow",         -- 8
+    "steamburn",       -- 9
+    "vertex",          -- 10
+    "redhalo",         -- 11
+}
+
+chosen_theme = themes[11]
 if hostname == "htpc" then
-    theme = "rainbow/theme.lua"
+    chosen_theme = themes[8]
 end
 
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init(gears.filesystem.get_themes_dir() .. theme)
+--beautiful.init(gears.filesystem.get_themes_dir() .. chosen_theme)
+beautiful.init(string.format("%s/.config/awesome/themes/%s/theme.lua", os.getenv("HOME"), chosen_theme))
 revelation.init()
 -- }}}
 
 -- =====================================================================
 -- {{{ s_autostart
 -- =====================================================================
---run_once("urxvtd")
---run_once("unclutter -root")
+--run_once({ "urxvtd", "unclutter -root", "urxvtc" }) -- entries must be separated by commas
 -- }}}
 
 -- =====================================================================
@@ -372,33 +379,33 @@ screen.connect_signal("property::geometry", set_wallpaper)
 gold_factor = 0.618
 tags = {
     {
-        name = "web", layout = layouts[1], master_width_factor = 0.5, master_count = 1, column_count = 1, selected = true
+        name = "1", layout = layouts[1], master_width_factor = 0.5, master_count = 1, column_count = 1, selected = true
         --master_count = 1, column_count = 2, gap = 0, gap_single_client  = false, screen = s, activated = true, selected = true
     },
     {
-        name = "dev", layout = layouts[1], master_width_factor = 0.5, master_count = 1, column_count = 1, selected = true
+        name = "2", layout = layouts[1], master_width_factor = 0.5, master_count = 1, column_count = 1, selected = true
         --master_count = 1, column_count = 2, gap = 0, gap_single_client  = false, screen = s, activated = true, selected = true
     },
     {
-        name = "term", layout = layouts[4], master_width_factor = 0.4, master_count = 1, column_count = 2,
+        name = "3", layout = layouts[1], master_width_factor = 0.5, master_count = 1, column_count = 1, selected = true
         --master_count = 2, column_count = 2, gap = 1, gap_single_client  = false, screen = s, activated = true
     },
     {
-        name = "vlc", layout = layouts[3], master_width_factor = gold_factor, master_count = 1, column_count = 2,
+        name = "4", layout = layouts[1], master_width_factor = 0.5, master_count = 1, column_count = 1,
         --master_count = 2, column_count = 2, gap = 0, gap_single_client  = false, screen = s, activated = true
     },
     {
-        name = "vm", layout = layouts[5], master_width_factor = 0.7, master_count = 1, column_count = 2,
+        name = "5", layout = layouts[1], master_width_factor = 0.5, master_count = 1, column_count = 1,
         --master_count = 1, column_count = 2, gap = 0, gap_single_client  = false, screen = s, activated = true
     },
-    {
-        name = "doc", layout = layouts[4], master_width_factor = gold_factor, master_count = 1, column_count = 2,
-        --master_count = 1, column_count = 2, gap = 0, gap_single_client  = false, screen = s, activated = true
-    },
-    {
-        name = "play", layout = layouts[5], master_fill_policy = "master_width_factor", master_width_factor = 0.8,
-        master_count = 1, column_count = 2, gap = 0, gap_single_client = false, screen = s, activated = true
-    }
+    --{
+    --    name = "doc", layout = layouts[4], master_width_factor = gold_factor, master_count = 1, column_count = 2,
+    --    --master_count = 1, column_count = 2, gap = 0, gap_single_client  = false, screen = s, activated = true
+    --},
+    --{
+    --    name = "play", layout = layouts[5], master_fill_policy = "master_width_factor", master_width_factor = 0.8,
+    --    master_count = 1, column_count = 2, gap = 0, gap_single_client = false, screen = s, activated = true
+    --}
 
 }
 -- }}}
@@ -516,7 +523,7 @@ awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    for i = 1, 7 do
+    for i = 1, 5 do
         awful.tag.add(i, tags[i])
     end
 
@@ -736,7 +743,7 @@ globalkeys = gears.table.join(
                         textbox = awful.screen.focused().mypromptbox.widget,
                         exe_callback = awful.util.eval,
                         history_path = awful.util.get_cache_dir() .. "/history_eval"
-                    }
+                   }
                 end,
                 { description = "lua execute prompt", group = "awesome" }),
 
@@ -757,9 +764,9 @@ globalkeys = gears.table.join(
         end,
                 { description = "dropdown terminal at bottom right", group = "drop" }),
         awful.key({ modkey }, "f", function()
-            run_or_raise("firefox", { class = "Firefox" })
+            run_or_raise("chromium", { class = "Chromium" })
         end,
-                { description = "Run firefox", group = "apps" }),
+                { description = "Run chromium", group = "apps" }),
         awful.key({ modkey }, "e", revelation)
 )
 -- }}}
