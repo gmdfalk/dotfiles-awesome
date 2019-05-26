@@ -20,7 +20,7 @@ local wibox = require("wibox")
 local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
-local menubar = require("menubar")
+--local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
@@ -29,6 +29,8 @@ require("awful.hotkeys_popup.keys")
 local drop = require("scratchdrop")
 local lain = require("lain")
 local revelation = require("revelation")
+local freedesktop   = require("freedesktop")
+local dpi           = require("beautiful.xresources").apply_dpi
 -- }}}
 
 -- =====================================================================
@@ -212,7 +214,7 @@ k_ams = { altkey, modkey, "Shift" }
 -- =====================================================================
 -- {{{ s_theme
 -- =====================================================================
-theme = "default/theme.lua"
+theme = "redhalo/theme.lua"
 if hostname == "htpc" then
     theme = "rainbow/theme.lua"
 end
@@ -235,32 +237,28 @@ revelation.init()
 local layouts = {
     awful.layout.suit.tile, --1
     awful.layout.suit.tile.left, --2
-    awful.layout.suit.tile.top, --3
-    awful.layout.suit.fair.horizontal, --4
-    lain.layout.termfair, --5
-    lain.layout.cascade, --6
+    awful.layout.suit.tile.bottom, --3
+    awful.layout.suit.tile.top, --4
+    awful.layout.suit.fair, --5
+    awful.layout.suit.fair.horizontal, --6
+    --awful.layout.suit.spiral,
+    --awful.layout.suit.spiral.dwindle,
+    --lain.layout.termfair, --5
+    --lain.layout.cascade, --6
     awful.layout.suit.floating, --7
-    lain.layout.uselesstile, --8
+    awful.layout.suit.max,
+    awful.layout.suit.max.fullscreen,
+    --lain.layout.uselesstile, --8
+    --awful.layout.suit.magnifier,
+    --awful.layout.suit.corner.nw,
+    -- awful.layout.suit.corner.ne,
+    -- awful.layout.suit.corner.sw,
+    -- awful.layout.suit.corner.se,
 }
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = layouts
---awful.layout.suit.floating,
---awful.layout.suit.tile,
---awful.layout.suit.tile.left,
---awful.layout.suit.tile.bottom,
---awful.layout.suit.tile.top,
---awful.layout.suit.fair,
---awful.layout.suit.fair.horizontal,
---awful.layout.suit.spiral,
---awful.layout.suit.spiral.dwindle,
---awful.layout.suit.max,
---awful.layout.suit.max.fullscreen,
---awful.layout.suit.magnifier,
---awful.layout.suit.corner.nw,
--- awful.layout.suit.corner.ne,
--- awful.layout.suit.corner.sw,
--- awful.layout.suit.corner.se,
+
 --}
 -- }}}
 
@@ -269,27 +267,30 @@ awful.layout.layouts = layouts
 -- =====================================================================
 -- Create a launcher widget and a main menu
 myawesomemenu = {
-    { "hotkeys", function()
-        hotkeys_popup.show_help(nil, awful.screen.focused())
-    end },
+    { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
     { "manual", terminal .. " -e man awesome" },
     { "edit config", editor_cmd .. " " .. awesome.conffile },
     { "restart", awesome.restart },
-    { "quit", function()
-        awesome.quit()
-    end },
+    { "quit", function() awesome.quit() end },
 }
 
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "open terminal", terminal }
-}
+mymainmenu = freedesktop.menu.build({
+    icon_size = beautiful.menu_height or dpi(16),
+    before = {
+        { "awesome", myawesomemenu, beautiful.awesome_icon },
+        -- other triads can be put here
+    },
+    after = {
+        { "open terminal", terminal },
+        -- other triads can be put here
+    }
 })
 
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = mymainmenu })
 
 -- Menubar configuration
-menubar.utils.terminal = terminal -- Set the terminal for applications that require it
+--menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
 -- Keyboard map indicator and switcher
@@ -739,10 +740,10 @@ globalkeys = gears.table.join(
                 end,
                 { description = "lua execute prompt", group = "awesome" }),
 
-        awful.key({ modkey }, "p", function()
-            menubar.show()
-        end,
-                { description = "show the menubar", group = "launcher" }),
+--        awful.key({ modkey }, "p", function()
+--            menubar.show()
+--        end,
+--                { description = "show the menubar", group = "launcher" }),
         awful.key({ modkey }, "a", function()
             drop("urxvt -name urxvt_drop_bl -e tmux", "bottom", "left", 0.5, 0.35)
         end,

@@ -2,3 +2,6 @@
     path = lain
     url = https://github.com/lcpz/lain.git
 
+[submodule "themes"]
+	path = themes
+	url = git@github.com:serialoverflow/awesome-themes.git
